@@ -1,0 +1,18 @@
+.indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 100%;
+  margin: 5px;
+}
+
+.indicatorOnline {
+  background-color: var(--mantine-color-green-6);
+}
+
+.indicatorOffline {
+  background-color: var(--mantine-color-red-6);
+}
+
+.indicatorHidden {
+  display: none;
+}

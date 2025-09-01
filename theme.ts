@@ -3,5 +3,14 @@
 import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
-  /* Put your mantine theme override here */
+  components: {
+    Title: {
+      styles: {
+        root: {
+          fontFamily: 'Poppins, sans-serif',
+          textTransform: 'uppercase',
+        },
+      },
+    },
+  },
 });

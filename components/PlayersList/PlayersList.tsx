@@ -1,68 +1,61 @@
-'use client';
+import { IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Text } from '@mantine/core';
+import { WhitelistEntry } from '@/pages/api/whitelist';
+import { PlayerCard } from '../PlayerCard';
 
-import { useEffect, useState } from 'react';
-import { Alert, Card, List, Loader, Text, Title } from '@mantine/core';
+function CardWrapper(props: {
+  entry: WhitelistEntry;
+  isOnline: 'yes' | 'no' | 'hide';
+  removeFromWhitelist: (uuid: string) => void;
+}) {
+  return (
+    <PlayerCard key={props.entry.uuid} entry={props.entry} isOnline={props.isOnline}>
+      <ActionIcon
+        variant="subtle"
+        aria-label="Settings"
+        onClick={() => props.removeFromWhitelist(props.entry.uuid)}
+      >
+        <IconTrash style={{ width: '70%', height: '70%' }} stroke={1.5} />
+      </ActionIcon>
+    </PlayerCard>
+  );
+}
 
-type ApiPlayersResponse = {
+export function PlayersList(props: {
   players: string[];
-  uuidMessages: string[];
-};
-
-export function PlayersList() {
-  const [players, setPlayers] = useState<string[]>([]);
-  const [uuidMessages, setUuidMessages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch('/api/players')
-      .then((res) => res.json())
-      .then((data: ApiPlayersResponse) => {
-        setPlayers(data.players || []);
-        setUuidMessages(data.uuidMessages || []);
-        setError(null);
-      })
-      .catch(() => {
-        setError('Failed to fetch players');
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  whitelist: WhitelistEntry[];
+  removeFromWhitelist: (uuid: string) => void;
+}) {
+  const whitelist = props.whitelist.sort((a, b) => a.name.localeCompare(b.name));
+  const playersOnline = props.whitelist.filter((entry) =>
+    props.players.some((player) => player.toLowerCase() === entry.name.toLowerCase())
+  );
+  const playersOffline = props.whitelist.filter((entry) => !playersOnline.includes(entry));
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Title order={3} mb="md">
-        Online Players
-      </Title>
-      {loading && <Loader />}
-      {error && <Alert color="red">{error}</Alert>}
-      {!loading && !error && (
-        <>
-          {players.length > 0 ? (
-            <List mb="md">
-              {players.map((player) => (
-                <List.Item key={player}>{player}</List.Item>
-              ))}
-            </List>
-          ) : (
-            <Text mb="md">No players online.</Text>
-          )}
-          <Title order={4} mt="md" mb="xs">
-            UUID Log Messages
-          </Title>
-          {uuidMessages.length > 0 ? (
-            <List size="sm">
-              {uuidMessages.map((msg, i) => (
-                <List.Item key={i} style={{ fontFamily: 'monospace' }}>
-                  {msg}
-                </List.Item>
-              ))}
-            </List>
-          ) : (
-            <Text size="sm">No UUID log messages found.</Text>
-          )}
-        </>
+    <>
+      {whitelist.length > 0 ? (
+        [
+          playersOnline.map((entry) => (
+            <CardWrapper
+              key={entry.uuid}
+              entry={entry}
+              isOnline="yes"
+              removeFromWhitelist={props.removeFromWhitelist}
+            />
+          )),
+          playersOffline.map((entry) => (
+            <CardWrapper
+              key={entry.uuid}
+              entry={entry}
+              isOnline="no"
+              removeFromWhitelist={props.removeFromWhitelist}
+            />
+          )),
+        ]
+      ) : (
+        <Text mb="md">No players whitelisted.</Text>
       )}
-    </Card>
+    </>
   );
 }

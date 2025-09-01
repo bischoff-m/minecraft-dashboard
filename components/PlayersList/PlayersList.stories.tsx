@@ -9,5 +9,5 @@ const meta: Meta<typeof PlayersList> = {
 export default meta;
 
 export const Default: StoryObj<typeof PlayersList> = {
-  render: () => <PlayersList />,
+  render: () => <PlayersList players={[]} whitelist={[]} removeFromWhitelist={() => {}} />,
 };
