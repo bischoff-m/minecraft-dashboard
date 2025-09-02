@@ -45,6 +45,7 @@ export default function HomePage() {
   const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([]);
   const [uuidToRemove, setUuidToRemove] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [envVars, setEnvVars] = useState<Record<string, string | undefined> | null>(null);
 
   // Fetch players and uuidMessages (initial load)
   useEffect(() => {
@@ -52,10 +53,12 @@ export default function HomePage() {
     Promise.all([
       fetch('/api/log-history').then((res) => res.json()),
       fetch('/api/whitelist').then((res) => res.json()),
+      fetch('/api/env').then((res) => res.json()),
     ])
-      .then(([logs, whitelistData]) => {
+      .then(([logs, whitelistData, envData]) => {
         setWhitelist(whitelistData || []);
         setLogState(parseState(logs as LogMessage[]));
+        setEnvVars(envData || {});
       })
       .catch(() => {
         notifications.show({
@@ -141,6 +144,11 @@ export default function HomePage() {
 
       <Container>
         <DashboardTitle />
+        <DashboardCard title="Environment Variables">
+          <pre style={{ maxHeight: 200, overflow: 'auto', fontSize: 12 }}>
+            {envVars ? JSON.stringify(envVars, null, 2) : 'Loading...'}
+          </pre>
+        </DashboardCard>
         {loading ? (
           <div style={{ textAlign: 'center', margin: '60px 0' }}>
             <Loader />
