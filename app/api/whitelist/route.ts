@@ -10,18 +10,6 @@ export type WhitelistEntry = {
   name: string;
   uuid: string;
 };
-
-function readWhitelist(): WhitelistEntry[] {
-  if (!fs.existsSync(whitelistPath)) {
-    return [];
-  }
-  try {
-    return JSON.parse(fs.readFileSync(whitelistPath, 'utf-8'));
-  } catch {
-    return [];
-  }
-}
-
 export async function GET() {
   if (!fs.existsSync(whitelistPath)) {
     return new NextResponse(JSON.stringify([]), { status: 200 });
@@ -44,7 +32,19 @@ export async function POST(req: Request) {
   }
 
   // Check for existing whitelist entry
-  const whitelist = readWhitelist();
+  let whitelist: WhitelistEntry[];
+  try {
+    whitelist = JSON.parse(fs.readFileSync(whitelistPath, 'utf-8'));
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({
+        error: `Failed to read whitelist.json. Error: ${(error as Error).message}`,
+      }),
+      {
+        status: 500,
+      }
+    );
+  }
   if (whitelist.some((entry: WhitelistEntry) => entry.uuid === uuid)) {
     return new NextResponse(JSON.stringify({ error: 'Player already whitelisted' }), {
       status: 409,
@@ -75,7 +75,19 @@ export async function DELETE(req: Request) {
   }
 
   // Remove the entry from the whitelist
-  let whitelist = readWhitelist();
+  let whitelist: WhitelistEntry[];
+  try {
+    whitelist = JSON.parse(fs.readFileSync(whitelistPath, 'utf-8'));
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({
+        error: `Failed to read whitelist.json. Error: ${(error as Error).message}`,
+      }),
+      {
+        status: 500,
+      }
+    );
+  }
   whitelist = whitelist.filter((e) => e.uuid !== uuid);
   fs.writeFileSync(whitelistPath, JSON.stringify(whitelist, null, 4));
 
