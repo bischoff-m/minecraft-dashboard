@@ -1,5 +1,5 @@
 import { Button } from '@mantine/core';
-import type { WhitelistEntry } from '@/pages/api/whitelist';
+import { WhitelistEntry } from '@/app/api/whitelist/route';
 import { PlayerCard } from '../PlayerCard';
 
 export function NewPlayers(props: {

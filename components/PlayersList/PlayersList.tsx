@@ -1,6 +1,6 @@
 import { IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Text } from '@mantine/core';
-import { WhitelistEntry } from '@/pages/api/whitelist';
+import type { WhitelistEntry } from '@/app/api/whitelist/route';
 import { PlayerCard } from '../PlayerCard';
 
 function CardWrapper(props: {

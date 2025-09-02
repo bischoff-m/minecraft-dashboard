@@ -1,5 +1,5 @@
 import { Card, Group, Stack, Text } from '@mantine/core';
-import { WhitelistEntry } from '@/pages/api/whitelist';
+import type { WhitelistEntry } from '@/app/api/whitelist/route';
 import classes from './PlayerCard.module.css';
 
 export function PlayerCard(props: {

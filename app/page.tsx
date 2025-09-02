@@ -7,17 +7,17 @@ import { DashboardCard } from '@/components/DashboardCard/DashboardCard';
 import { NewPlayers } from '@/components/NewPlayers';
 import { RemovePlayerModal } from '@/components/RemovePlayerModal/RemovePlayerModal';
 import { LogMessage } from '@/lib/log-parse';
-import { WhitelistEntry } from '@/pages/api/whitelist';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import { DashboardTitle } from '../components/DashboardTitle/DashboardTitle';
 import { PlayersList } from '../components/PlayersList/PlayersList';
+import type { WhitelistEntry } from './api/whitelist/route';
 
-export type LogState = {
+type LogState = {
   players: string[];
   uuids: WhitelistEntry[];
 };
 
-export function parseState(logMessages: LogMessage[]): LogState {
+function parseState(logMessages: LogMessage[]): LogState {
   const online = new Set<string>();
   const uuids: WhitelistEntry[] = [];
   for (const log of logMessages) {
