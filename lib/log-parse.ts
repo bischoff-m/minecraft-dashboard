@@ -14,9 +14,6 @@ export type LogMessage = {
 };
 
 export function parseLogFile(logPath: string): LogMessage[] {
-  if (!fs.existsSync(logPath)) {
-    return [];
-  }
   const log = fs.readFileSync(logPath, 'utf-8');
   const lines = log.split(/\r?\n/);
   const logMessages: LogMessage[] = [];

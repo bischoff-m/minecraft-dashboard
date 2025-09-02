@@ -41,6 +41,7 @@ function parseState(logMessages: LogMessage[]): LogState {
 }
 
 export default function HomePage() {
+  const [logs, setLogs] = useState<LogMessage[]>([]);
   const [logState, setLogState] = useState<LogState>({ players: [], uuids: [] });
   const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([]);
   const [uuidToRemove, setUuidToRemove] = useState<string | null>(null);
@@ -57,13 +58,14 @@ export default function HomePage() {
     ])
       .then(([logs, whitelistData, envData]) => {
         setWhitelist(whitelistData || []);
+        setLogs(logs || []);
         setLogState(parseState(logs as LogMessage[]));
         setEnvVars(envData || {});
       })
-      .catch(() => {
+      .catch((error) => {
         notifications.show({
           title: 'Error',
-          message: 'Failed to fetch data',
+          message: `Failed to fetch data. Error: ${error.message}`,
           color: 'red',
           autoClose: false,
         });
@@ -147,6 +149,22 @@ export default function HomePage() {
         <DashboardCard title="Environment Variables">
           <pre style={{ maxHeight: 200, overflow: 'auto', fontSize: 12 }}>
             {envVars ? JSON.stringify(envVars, null, 2) : 'Loading...'}
+          </pre>
+        </DashboardCard>
+
+        <DashboardCard title="All Log Messages">
+          <pre
+            style={{
+              maxHeight: 300,
+              overflow: 'auto',
+              background: '#222',
+              color: '#eee',
+              padding: 12,
+              borderRadius: 6,
+              fontSize: 12,
+            }}
+          >
+            {logs && logs.length > 0 ? logs.map((log) => log.message).join('\n') : 'No logs.'}
           </pre>
         </DashboardCard>
         {loading ? (
