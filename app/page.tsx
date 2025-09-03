@@ -1,14 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Container, Grid, Loader } from '@mantine/core';
+import { Container, Grid, Group, Loader } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { GithubButton } from '@/components/ActionButton/GithubButton';
 import { DashboardCard } from '@/components/DashboardCard/DashboardCard';
 import { NewPlayers } from '@/components/NewPlayers';
 import { PlayerCount } from '@/components/PlayerCount/PlayerCount';
 import { RemovePlayerModal } from '@/components/RemovePlayerModal/RemovePlayerModal';
 import { LogMessage } from '@/lib/log-parse';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import { ColorSchemeToggle } from '../components/ActionButton/ColorSchemeToggle';
 import { DashboardTitle } from '../components/DashboardTitle/DashboardTitle';
 import { PlayersList } from '../components/PlayersList/PlayersList';
 import type { WhitelistEntry } from './api/whitelist/route';
@@ -136,11 +137,11 @@ export default function HomePage() {
         reject={() => setUuidToRemove(null)}
       />
 
-      <Container pos="absolute" top={16} right={0}>
-        <ColorSchemeToggle />
-      </Container>
-
-      <Container style={{ justifyItems: 'center' }}>
+      <Container style={{ justifyItems: 'center' }} pb={36}>
+        <Group m={6}>
+          <ColorSchemeToggle />
+          <GithubButton url="https://github.com/bischoff-m/minecraft-dashboard" />
+        </Group>
         <DashboardTitle />
         {loading ? (
           <div style={{ textAlign: 'center', margin: '60px 0' }}>
@@ -149,8 +150,7 @@ export default function HomePage() {
         ) : (
           <>
             <PlayerCount count={logState.players.length} />
-            <br />
-            <Grid w="100%">
+            <Grid w="100%" mt={60}>
               <Grid.Col span={{ base: 12, xs: 6 }}>
                 <DashboardCard title="Whitelist">
                   <PlayersList
