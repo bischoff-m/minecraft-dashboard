@@ -150,7 +150,7 @@ export default function HomePage() {
           <>
             <PlayerCount count={logState.players.length} />
             <br />
-            <Grid>
+            <Grid w="100%">
               <Grid.Col span={{ base: 12, xs: 6 }}>
                 <DashboardCard title="Whitelist">
                   <PlayersList

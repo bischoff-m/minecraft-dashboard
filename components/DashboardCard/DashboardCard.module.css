@@ -1,0 +1,16 @@
+.fallback {
+  display: none;
+  background-color: rgba(255, 255, 255, 0);
+  padding: 12px;
+  box-shadow: none;
+  @mixin dark {
+    border: 1px dashed var(--mantine-color-dark-5);
+  }
+  @mixin light {
+    border: 1px dashed var(--mantine-color-gray-3);
+  }
+}
+
+.fallbackIfEmpty .fallback:only-child {
+  display: block;
+}
