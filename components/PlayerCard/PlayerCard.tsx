@@ -10,7 +10,7 @@ export function PlayerCard(props: {
   const { entry, isOnline } = props;
   return (
     <div key={entry.uuid}>
-      <Card className={classes.item} shadow="sm" padding={6} px={12} radius="md">
+      <Card className={classes.item} shadow="md" padding={6} px={12} radius="md">
         <Group gap={12} w="100%">
           <div
             className={

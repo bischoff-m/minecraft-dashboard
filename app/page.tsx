@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Container, Grid, Loader, Text } from '@mantine/core';
+import { Container, Grid, Loader } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { DashboardCard } from '@/components/DashboardCard/DashboardCard';
 import { NewPlayers } from '@/components/NewPlayers';
+import { PlayerCount } from '@/components/PlayerCount/PlayerCount';
 import { RemovePlayerModal } from '@/components/RemovePlayerModal/RemovePlayerModal';
 import { LogMessage } from '@/lib/log-parse';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
@@ -41,12 +42,10 @@ function parseState(logMessages: LogMessage[]): LogState {
 }
 
 export default function HomePage() {
-  const [logs, setLogs] = useState<LogMessage[]>([]);
   const [logState, setLogState] = useState<LogState>({ players: [], uuids: [] });
   const [whitelist, setWhitelist] = useState<WhitelistEntry[]>([]);
   const [uuidToRemove, setUuidToRemove] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [envVars, setEnvVars] = useState<Record<string, string | undefined> | null>(null);
 
   // Fetch players and uuidMessages (initial load)
   useEffect(() => {
@@ -54,13 +53,10 @@ export default function HomePage() {
     Promise.all([
       fetch('/api/log-history').then((res) => res.json()),
       fetch('/api/whitelist').then((res) => res.json()),
-      fetch('/api/env').then((res) => res.json()),
     ])
-      .then(([logs, whitelistData, envData]) => {
+      .then(([logs, whitelistData]) => {
         setWhitelist(whitelistData || []);
-        setLogs(logs || []);
         setLogState(parseState(logs as LogMessage[]));
-        setEnvVars(envData || {});
       })
       .catch((error) => {
         notifications.show({
@@ -144,40 +140,18 @@ export default function HomePage() {
         <ColorSchemeToggle />
       </Container>
 
-      <Container>
+      <Container style={{ justifyItems: 'center' }}>
         <DashboardTitle />
-        <DashboardCard title="Environment Variables">
-          <pre style={{ maxHeight: 200, overflow: 'auto', fontSize: 12 }}>
-            {envVars ? JSON.stringify(envVars, null, 2) : 'Loading...'}
-          </pre>
-        </DashboardCard>
-
-        <DashboardCard title="All Log Messages">
-          <pre
-            style={{
-              maxHeight: 300,
-              overflow: 'auto',
-              background: '#222',
-              color: '#eee',
-              padding: 12,
-              borderRadius: 6,
-              fontSize: 12,
-            }}
-          >
-            {logs && logs.length > 0 ? logs.map((log) => log.message).join('\n') : 'No logs.'}
-          </pre>
-        </DashboardCard>
         {loading ? (
           <div style={{ textAlign: 'center', margin: '60px 0' }}>
             <Loader />
           </div>
         ) : (
           <>
-            <Text fz="h2" fw={600} ta="center" mb="md">
-              {logState.players.length} Players Online
-            </Text>
+            <PlayerCount count={logState.players.length} />
+            <br />
             <Grid>
-              <Grid.Col span={6}>
+              <Grid.Col span={{ base: 12, xs: 6 }}>
                 <DashboardCard title="Whitelist">
                   <PlayersList
                     players={logState.players}
@@ -186,7 +160,7 @@ export default function HomePage() {
                   />
                 </DashboardCard>
               </Grid.Col>
-              <Grid.Col span={6}>
+              <Grid.Col span={{ base: 12, xs: 6 }}>
                 <DashboardCard title="New Players">
                   <NewPlayers
                     uuids={logState.uuids}

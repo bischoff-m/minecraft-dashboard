@@ -7,10 +7,12 @@
 
 .indicatorOnline {
   background-color: var(--mantine-color-green-6);
+  box-shadow: 0 0 5px 0 var(--mantine-color-green-4);
 }
 
 .indicatorOffline {
   background-color: var(--mantine-color-red-6);
+  box-shadow: 0 0 5px 0 var(--mantine-color-red-4);
 }
 
 .indicatorHidden {
